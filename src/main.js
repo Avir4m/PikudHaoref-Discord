@@ -1,4 +1,4 @@
-import { Client, GatewayIntentBits } from 'discord.js';
+import { Client, Embed, GatewayIntentBits } from 'discord.js';
 import { config } from 'dotenv';
 import { getActiveAlert } from 'pikud-haoref-api';
 
@@ -24,11 +24,15 @@ const poll = () => {
             const alertChannel = client.channels.cache.get('1173985945687687270');
             if (alertChannel) {
                 if (alert.type != 'none') {
-                    alertChannel.send(`
-                    Type:${alert.type}
-                    Cities:${alert.cities} 
-                    Instructions${alert.instructions}
-                    `);
+                    const embed = new MessageEmbed()
+                    .setTitle('התראה בזמן אמת')
+                    .setColor('0xff0000')
+                    .addFields(
+                        {"name": `סוג התראה :`, "value": `${alert.type}`},
+                        {"name": `ערים`, "value": `${alert.cities}`},
+                        {"name": `הוראות פיקוד העורף`,"value": `${alert.instructions}`}
+                    )
+                    alertChannel.send(embed);
                 }
             }
         }

@@ -1,3 +1,3 @@
-# Tzeva-Adom
+# Pikud Haoref Discord Bot
 
-Discord bot to show "Tzeva-Adom" Alerts in real-time
+Sends alerts in real-time

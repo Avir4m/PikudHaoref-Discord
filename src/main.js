@@ -21,16 +21,16 @@ const poll = () => {
             console.error('Retrieving active alert failed: ', err);
         } else {
             const alertChannel = client.channels.cache.get('1173985945687687270');
-            const embed = new EmbedBuilder()
-            .setTitle(`התראות בזמן אמת`)
-            .setColor(`0xff0000`)
-            .setFields(
-              {name: `סוג התראה`, value: `${alert.type}`},
-              {name: `ערים`, value: `${alert.cities}`},
-              {name: `הוראות פיקוד העורף`, value: `${alert.instructions}`},
-              )
             if (alertChannel) {
                 if (alert.type != 'none') {
+                    const embed = new EmbedBuilder()
+                    .setTitle(`התראות בזמן אמת`)
+                    .setColor(`#a60b00`)
+                    .setFields(
+                        {name: `סוג התראה`, value: `${alert.type}`},
+                        {name: `ערים`, value: `${alert.cities}`},
+                        {name: `הוראות פיקוד העורף`, value: `${alert.instructions}`},
+                        );
                     alertChannel.send({embeds : [embed]});
                 }
             }

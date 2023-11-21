@@ -12,6 +12,7 @@
   "license": "ISC",
   "dependencies": {
     "discord.js": "^14.14.1",
+    "mongoose": "^8.0.1",
     "pikud-haoref-api": "^3.0.2"
   },
   "type": "module",

@@ -29,30 +29,30 @@ const GuildSettings = mongoose.model('GuildSettings', guildSettingsSchema);
 
 const getAlerts = async (client) => {
     const options = {};
-
     try {
         const allGuilds = await GuildSettings.find();
 
         for (const guildSetting of allGuilds) {
             const alertChannel = client.channels.cache.get(guildSetting.alertChannelId);
-
-            getActiveAlert(async (err, alert) => {
-                if (err) {
-                    console.error('Retrieving active alert failed: ', err);
-                } else {
-                    if (alertChannel && alert.type !== 'none') {
-                        const embed = new EmbedBuilder()
-                            .setTitle(`התראות בזמן אמת`)
-                            .setColor(`#a60b00`)
-                            .setFields(
-                                { name: `סוג התראה`, value: `${translations[alert.type]}` },
-                                { name: `ערים`, value: `${alert.cities}` },
-                                { name: `הוראות פיקוד העורף`, value: `${alert.instructions}` },
-                            );
-                        alertChannel.send({ embeds: [embed] });
+            if (alertChannel || alertChannel.permissionsFor(client.user).has('SEND_MESSAGES')) {
+                getActiveAlert(async (err, alert) => {
+                    if (err) {
+                        console.error('Retrieving active alert failed: ', err);
+                    } else {
+                        if (alertChannel && alert.type !== 'none') {
+                            const embed = new EmbedBuilder()
+                                .setTitle(`התראות בזמן אמת`)
+                                .setColor(`#a60b00`)
+                                .setFields(
+                                    { name: `סוג התראה`, value: `${translations[alert.type]}` },
+                                    { name: `ערים`, value: `${alert.cities}` },
+                                    { name: `הוראות פיקוד העורף`, value: `${alert.instructions}` },
+                                );
+                            alertChannel.send({ embeds: [embed] });
+                        }
                     }
-                }
-            }, options);
+                }, options);
+            }
         }
 
         setTimeout(() => getAlerts(client), 5000);
@@ -70,7 +70,6 @@ const setAlertChannel = async (guildId, channelId) => {
         );
     } catch (err) {
         console.error('Error setting alert channel:', err);
-        throw err;
     }
 };
 

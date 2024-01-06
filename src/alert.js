@@ -33,24 +33,26 @@ const getAlerts = async (client) => {
         const allGuilds = await GuildSettings.find();
 
         for (const guildSetting of allGuilds) {
-            const alertChannel = client.channels.cache.get(guildSetting.alertChannelId)
-            getActiveAlert(async (err, alert) => {
-                if (err) {
-                    console.error('Retrieving active alert failed: ', err);
-                } else {
-                    if (alertChannel && alert.type !== 'none') {
-                        const embed = new EmbedBuilder()
-                            .setTitle(`התראות בזמן אמת`)
-                            .setColor(`#a60b00`)
-                            .setFields(
-                                { name: `סוג התראה`, value: `${translations[alert.type]}` },
-                                { name: `ערים`, value: `${alert.cities}` },
-                                { name: `הוראות פיקוד העורף`, value: `${alert.instructions}` },
-                            );
-                        alertChannel.send({ embeds: [embed] });
+            const alertChannel = client.channels.cache.get(guildSetting.alertChannelId);
+            if (!alertChannel === undefined) {
+                getActiveAlert(async (err, alert) => {
+                    if (err) {
+                        console.error('Retrieving active alert failed: ', err);
+                    } else {
+                        if (alertChannel && alert.type !== 'none') {
+                            const embed = new EmbedBuilder()
+                                .setTitle(`התראות בזמן אמת`)
+                                .setColor(`#a60b00`)
+                                .setFields(
+                                    { name: `סוג התראה`, value: `${translations[alert.type]}` },
+                                    { name: `ערים`, value: `${alert.cities}` },
+                                    { name: `הוראות פיקוד העורף`, value: `${alert.instructions}` },
+                                );
+                            alertChannel.send({ embeds: [embed] });
+                        }
                     }
-                }
-            }, options);
+                }, options);
+            }
         }
 
         setTimeout(() => getAlerts(client), 5000);
@@ -74,10 +76,17 @@ const setAlertChannel = async (guildId, channelId) => {
 const setAlertChannelCommand = async (interaction) => {
     const guildId = interaction.guildId;
     const channelId = interaction.channelId;
+    const client = interaction.guild.members.me;
+
+    const channelPermissions = interaction.guild.channels.cache.get(channelId).permissionsFor(client.user.id);
 
     try {
-        await setAlertChannel(guildId, channelId);
-        interaction.reply({ content: `Alert channel set to <#${channelId}>.`, ephemeral: true });
+        if(!channelPermissions.has('SendMessages')) {
+            interaction.reply({ content: `Failed to set the alert channel. No permissions`, ephemeral: true });
+        } else {
+            await setAlertChannel(guildId, channelId);
+            interaction.reply({ content: `Alert channel set to <#${channelId}>.`, ephemeral: true });
+        }
     } catch (error) {
         console.error('Error setting alert channel:', error);
         interaction.reply({ content: 'Failed to set the alert channel. Please try again.', ephemeral: true });

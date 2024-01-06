@@ -34,7 +34,7 @@ const getAlerts = async (client) => {
 
         for (const guildSetting of allGuilds) {
             const alertChannel = client.channels.cache.get(guildSetting.alertChannelId);
-            if (alertChannel || alertChannel.permissionsFor(client.user).has('SEND_MESSAGES')) {
+            if (alertChannel || alertChannel.permissionsFor(client.user)?.has('SEND_MESSAGES')) {
                 getActiveAlert(async (err, alert) => {
                     if (err) {
                         console.error('Retrieving active alert failed: ', err);

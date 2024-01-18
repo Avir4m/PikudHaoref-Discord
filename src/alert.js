@@ -34,7 +34,7 @@ const getAlerts = async (client) => {
 
         for (const guildSetting of allGuilds) {
             const alertChannel = client.channels.cache.get(guildSetting.alertChannelId);
-            if (!alertChannel === undefined) {
+            if (alertChannel !== undefined) {
                 getActiveAlert(async (err, alert) => {
                     if (err) {
                         console.error('Retrieving active alert failed: ', err);
@@ -48,7 +48,11 @@ const getAlerts = async (client) => {
                                     { name: `ערים`, value: `${alert.cities}` },
                                     { name: `הוראות פיקוד העורף`, value: `${alert.instructions}` },
                                 );
-                            alertChannel.send({ embeds: [embed] });
+                            try {
+                                alertChannel.send({ embeds: [embed] });
+                            } catch (sendError) {
+                                console.error('Error sending alert message:', sendError);
+                            }
                         }
                     }
                 }, options);

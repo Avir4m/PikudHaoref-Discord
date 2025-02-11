@@ -18,6 +18,23 @@ The bot is already hosted and running. You can invite it to your server using th
 
 The bot automatically posts alerts to designated channels. Ensure it has the necessary permissions to post messages in your server.
 
+### Setting the Alert Channel
+
+Use the `/setalertchannel` command to designate a specific channel in your server where the bot will post emergency alerts. This helps ensure alerts are sent to the most relevant channels for your community.
+
+To set the alert channel:
+
+1. Use the `/setalertchannel` command.
+2. Select the channel where you'd like the bot to post alerts.
+
+Example:
+
+```
+/setalertchannel #alerts
+```
+
+Make sure the bot has permission to send messages to the chosen channel.
+
 ## Contributing
 
 Contributions are welcome! Please fork the repository and create a pull request with your changes.
